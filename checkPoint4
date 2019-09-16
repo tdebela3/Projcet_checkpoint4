@@ -21,14 +21,34 @@ library(ggplot2)
 Air_tran <- read.csv(file.choose(), header = TRUE)
 
 
-# transformations on original dataset
+                   #transformations on original dataset
 
 #  Sorting the dataset by flight hours
 air_accident_hours <- arrange(Air_tran, Flight.hours)
-# 2 selecting part of the dataset
+
+# selecting part of the dataset
 Air_tran_accident <- select(Air_tran,Year, Accidents.Fatalities., Fatalities.Aboard.)
-# 3 percentage of accidents which happen aboard
-abroad_precentage <- mutate(Air_tran, ratio = Fatalities.Aboard. / Fatalities..Total. *100)
+
+# data type conversions
+Air_tran$Accidents..all. <-  as.integer(Air_tran$Accidents..all.)
+Air_tran$Fatalities..Total. <- as.integer(Air_tran$Fatalities..Total.)
+Air_tran$Fatalities.Aboard. <-as.integer(Air_tran$Fatalities.Aboard.)
+Air_tran$Flight.hours <-as.integer(Air_tran$Flight.hours)
+
+# mutating 
+abroad_precentage <- mutate(Air_tran, ratio = Fatalities.Aboard. / Fatalities..Total. * 100)
+accident_per_hours <- mutate(Air_tran, APH = (Accidents..all.) / (Flight.hours))
+fatalities_per_hours <- mutate(Air_tran, APH = (Fatalities..Total.) / (Flight.hours))
+
+# mean and 
+mean(Air_tran$Accidents..all.)
+sd(Air_tran$Accidents..all.)
+mean(Air_tran$Accidents.Fatalities.)
+sd(Air_tran$Accidents.Fatalities.)
+meann(Air_tran$Fatalities.Aboard..)
+Sd(Air_tran$Fatalities.Aboard.)
+mean(Air_tran$Flight.hours.)
+sd(Air_tran$Flight.hours.)
 
 skim(Air_tran)
 # Data cleaning(removing rows which doesn't have a value under 
@@ -36,7 +56,7 @@ skim(Air_tran)
 clean_data <- Air_tran[complete.cases(Air_tran),]  
 
 
-# ExploratoryDataAnalysis
+              # ExploratoryDataAnalysis
 
 #Summary Statistics
 summary(Air_tran)
@@ -48,17 +68,17 @@ ggplot(Air_tran, aes(x=Year, y=accident.rate)) + geom_point()
 ggplot(data=Air_tran, aes(Air_tran$Accidents.Fatalities.)) + geom_histogram()
 
 
-## models( multiple regression)
-names(Air_tran)
-model1 <- lm(Year ~ Fatalities..Total + Fatalities.Aboard., data=Air_tran)
+            ## models( multiple regression) 
+
+model1 <- lm(Air_tran$Year ~ Air_tran$Fatalities..Total)
 # there is a strong negative relationship between year and 
 # total fatalities as well as fatalities at aboard
 
 model2 <- lm(Year ~ Flight.hours. )
 # inverse relationship between year and flight hours
 
-# data visualazation
-# 
+            # data and model visualazation
+
 # linear regression for the year and flight hours data pairs
 ggplot(Air_tran, aes(x=Year, y=Flight.hours)) + geom_point() + 
   geom_smooth(method=lm)
@@ -74,7 +94,6 @@ ggplot(Air_tran, aes(x=Year, y=Fatalities.Aboard.)) + geom_point() +
 # linear regression for the all accident and accidents fatalities data pairs
 ggplot(Air_tran, aes(x=Accidents..all., y=Accidents.Fatalities.)) + geom_point() + 
   geom_smooth(method=lm)
-
 # linear regression for the all accident and fatalities at boarding data pairs
 ggplot(Air_tran, aes(x=Accidents..all., y=Fatalities.Aboard.)) + geom_point() + 
   geom_smooth(method=lm)
