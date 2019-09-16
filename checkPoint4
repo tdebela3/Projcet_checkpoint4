@@ -1,0 +1,83 @@
+# Project Checkpoint #4
+# Tedla D Debela , tdebela3@gatech.edu
+# Created 2019-09-13
+# Data transformation, and visualization
+# Course: GT 4801-F 
+# Instructors:  Ameet Doshi  and Jay Forrest
+
+# Installing packages need to perform data transformations
+install.packages("tidyverse") # a set of data science tools including dplyr, tidyr and stringr
+install.packages("skimr") # a package to facilitate data summaries
+install.packages("Hmisc") # a package for data analysis
+
+# Loading the packages
+library(tidyverse)
+library(skimr)
+library(Hmisc)
+
+# importing excel data
+Air_tran <- read.csv(file.choose(), header = TRUE)
+
+
+# transformations on original dataset
+
+#  Sorting the dataset by flight hours
+air_accident_hours <- arrange(Air_tran, Flight.hours)
+# 2 selecting part of the dataset
+Air_tran_accident <- select(Air_tran,Year, Accidents.Fatalities., Fatalities.Aboard.)
+# 3 percentage of accidents which happen aboard
+abroad_precentage <- mutate(Air_tran, ratio = Fatalities.Aboard. / Fatalities..Total. *100)
+
+skim(Air_tran)
+# Data cleaning(removing rows which doesn't have a value under 
+# certian columns) 
+clean_data <- Air_tran[complete.cases(Air_tran),]  
+
+
+# ExploratoryDataAnalysis
+
+#Summary Statistics
+summary(Air_tran)
+# plot
+plot(Air_tran$Year, Air_tran$accident.rate)
+# ggplot
+ggplot(Air_tran, aes(x=Year, y=accident.rate)) + geom_point()
+# Histogram
+ggplot(data=Air_tran, aes(Air_tran$Accidents.Fatalities.)) + geom_histogram()
+
+
+## models( multiple regression)
+names(Air_tran)
+model1 <- lm(Year ~ Fatalities..Total + Fatalities.Aboard., data=Air_tran)
+# there is a strong negative relationship between year and 
+# total fatalities as well as fatalities at aboard
+
+model2 <- lm(Year ~ Flight.hours. )
+# inverse relationship between year and flight hours
+
+# data visualazation
+# 
+# linear regression for the year and flight hours data pairs
+ggplot(Air_tran, aes(x=Year, y=Flight.hours)) + geom_point() + 
+  geom_smooth(method=lm)
+# linear regression for the year and accident rate data pairs
+ggplot(Air_tran, aes(x=Year, y=accident.rate)) + geom_point() + 
+  geom_smooth(method=lm)
+# linear regression for the year and fatalities rate data pairs
+ggplot(Air_tran, aes(x=Year, y=Fatalities.rate)) + geom_point() + 
+  geom_smooth(method=lm)
+# linear regression for the year and fatalities on aboard data pairs
+ggplot(Air_tran, aes(x=Year, y=Fatalities.Aboard.)) + geom_point() + 
+  geom_smooth(method=lm)
+# linear regression for the all accident and accidents fatalities data pairs
+ggplot(Air_tran, aes(x=Accidents..all., y=Accidents.Fatalities.)) + geom_point() + 
+  geom_smooth(method=lm)
+
+# linear regression for the all accident and fatalities at boarding data pairs
+ggplot(Air_tran, aes(x=Accidents..all., y=Fatalities.Aboard.)) + geom_point() + 
+  geom_smooth(method=lm)
+
+
+
+
+
