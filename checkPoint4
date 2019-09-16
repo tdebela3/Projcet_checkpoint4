@@ -9,11 +9,13 @@
 install.packages("tidyverse") # a set of data science tools including dplyr, tidyr and stringr
 install.packages("skimr") # a package to facilitate data summaries
 install.packages("Hmisc") # a package for data analysis
+install.packages("ggplot2") 
 
 # Loading the packages
 library(tidyverse)
 library(skimr)
 library(Hmisc)
+library(ggplot2)
 
 # importing excel data
 Air_tran <- read.csv(file.choose(), header = TRUE)
